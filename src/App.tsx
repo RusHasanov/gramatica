@@ -11,6 +11,13 @@ import {
   recordExerciseResult,
   saveUserStats,
 } from './utils/storage';
+import {
+  loadCompletedReadingIds,
+  toggleReadingCompleted,
+  loadSavedWords,
+} from './utils/readingStorage';
+import { loadReadingById } from './data/readings';
+import { ReadingItem } from './types/reading';
 import { shuffleArray } from './utils/shuffle';
 import { useOnlineStatus } from './utils/useOnlineStatus';
 import { Navbar, ActiveTab } from './components/Navbar';
@@ -18,7 +25,10 @@ import { UnitCatalog } from './components/UnitCatalog';
 import { ExerciseDrillView } from './components/ExerciseDrillView';
 import { UnitGuideModal } from './components/UnitGuideModal';
 import { MistakesBankView } from './components/MistakesBankView';
-import { BookOpen, ArrowLeft, WifiOff } from 'lucide-react';
+import { ReadingCatalog } from './components/ReadingCatalog';
+import { ReadingDetailView } from './components/ReadingDetailView';
+import { VocabularyView } from './components/VocabularyView';
+import { BookOpen, ArrowLeft, WifiOff, Loader2 } from 'lucide-react';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<ActiveTab>('units');
@@ -40,9 +50,17 @@ export default function App() {
   // Modal for reading full grammar rules
   const [guideModalUnit, setGuideModalUnit] = useState<CambridgeUnit | null>(null);
 
+  // Reading state
+  const [activeReadingItem, setActiveReadingItem] = useState<ReadingItem | null>(null);
+  const [isLoadingReading, setIsLoadingReading] = useState(false);
+  const [completedReadingIds, setCompletedReadingIds] = useState<string[]>(loadCompletedReadingIds);
+  const [savedWordsCount, setSavedWordsCount] = useState<number>(() => loadSavedWords().length);
+
   // Sync stats from storage on mount
   useEffect(() => {
     setUserStats(loadUserStats());
+    setCompletedReadingIds(loadCompletedReadingIds());
+    setSavedWordsCount(loadSavedWords().length);
   }, []);
 
   // Compute accuracy
@@ -57,7 +75,6 @@ export default function App() {
   const handleSelectUnit = (unit: CambridgeUnit) => {
     setCurrentDrillUnit(unit);
     setIsBlitzActive(false);
-    // Shuffle unit exercises on each launch as requested
     setDrillExercises(shuffleArray(unit.exercises));
     setDrillSessionTitle(`Юнит ${unit.unitNumber}: ${unit.titleRu}`);
     setActiveTab('drill');
@@ -95,7 +112,7 @@ export default function App() {
     setUserStats(updated);
   };
 
-  // Handle exercise recording
+  // Handle drill exercise recording
   const handleRecordResult = (
     exercise: GrammarExercise,
     isCorrect: boolean,
@@ -111,13 +128,54 @@ export default function App() {
     setUserStats({ ...updated });
   };
 
+  // Handle reading selection with dynamic import()
+  const handleSelectReading = async (id: string) => {
+    setIsLoadingReading(true);
+    try {
+      const data = await loadReadingById(id);
+      setActiveReadingItem(data);
+    } catch (err) {
+      console.error('Failed to dynamically load reading:', err);
+    } finally {
+      setIsLoadingReading(false);
+    }
+  };
+
+  // Handle toggling reading completion
+  const handleToggleReadingCompleted = (readingId: string) => {
+    const { completedIds } = toggleReadingCompleted(readingId);
+    setCompletedReadingIds(completedIds);
+  };
+
+  // Handle recording gap exercises from Reading into global Mistakes Bank
+  const handleReadingExerciseResult = (
+    exercise: GrammarExercise,
+    isCorrect: boolean,
+    userAnswer: string,
+    unitId?: string,
+    unitTitle?: string
+  ) => {
+    const updated = recordExerciseResult(
+      exercise,
+      isCorrect,
+      userAnswer,
+      unitId,
+      unitTitle || 'Текст для чтения'
+    );
+    setUserStats({ ...updated });
+  };
+
+  const refreshSavedWordsCount = () => {
+    setSavedWordsCount(loadSavedWords().length);
+  };
+
   return (
     <div className="min-h-screen bg-white text-slate-900 flex flex-col selection:bg-sky-100 selection:text-sky-900 font-sans overflow-x-hidden">
       {/* Offline Status Badge */}
       {!isOnline && (
         <div className="bg-amber-600 text-white text-xs py-1.5 px-4 text-center font-medium flex items-center justify-center gap-1.5 sticky top-0 z-50 shadow-xs">
           <WifiOff className="w-3.5 h-3.5" />
-          <span>Офлайн-режим: все упражнения и правила доступны без интернета</span>
+          <span>Офлайн-режим: все упражнения, тексты и правила доступны без интернета</span>
         </div>
       )}
 
@@ -127,10 +185,12 @@ export default function App() {
         setActiveTab={(tab) => {
           if (tab !== 'drill') setIsBlitzActive(false);
           setActiveTab(tab);
+          refreshSavedWordsCount();
         }}
         streakDays={userStats.streakDays}
         accuracy={accuracy}
         mistakesCount={unresolvedMistakesCount}
+        savedWordsCount={savedWordsCount}
         onStartDailyDrill={handleStartDailyBlitz}
         isBlitzActive={isBlitzActive && activeTab === 'drill'}
       />
@@ -186,7 +246,43 @@ export default function App() {
           </div>
         )}
 
-        {/* Tab 3: Mistakes Bank */}
+        {/* Tab 3: Reading Tab (Catalog or Detail) */}
+        {activeTab === 'reading' && (
+          <>
+            {isLoadingReading ? (
+              <div className="py-20 text-center flex flex-col items-center justify-center space-y-3">
+                <Loader2 className="w-8 h-8 text-sky-600 animate-spin" />
+                <p className="text-sm font-medium text-slate-600">Загрузка текста...</p>
+              </div>
+            ) : activeReadingItem ? (
+              <ReadingDetailView
+                reading={activeReadingItem}
+                onBack={() => setActiveReadingItem(null)}
+                isCompleted={completedReadingIds.includes(activeReadingItem.id)}
+                onToggleCompleted={() => handleToggleReadingCompleted(activeReadingItem.id)}
+                onRecordExerciseResult={handleReadingExerciseResult}
+                onWordSavedChanged={refreshSavedWordsCount}
+              />
+            ) : (
+              <ReadingCatalog
+                onSelectReading={handleSelectReading}
+                completedReadingIds={completedReadingIds}
+              />
+            )}
+          </>
+        )}
+
+        {/* Tab 4: My Words (Vocabulary) */}
+        {activeTab === 'vocabulary' && (
+          <VocabularyView
+            onGoToReading={() => {
+              setActiveReadingItem(null);
+              setActiveTab('reading');
+            }}
+          />
+        )}
+
+        {/* Tab 5: Mistakes Bank */}
         {activeTab === 'mistakes' && (
           <MistakesBankView
             mistakes={userStats.mistakes}
@@ -215,17 +311,40 @@ export default function App() {
 
           <div className="flex items-center gap-4">
             <button
-              onClick={() => setActiveTab('units')}
+              onClick={() => {
+                setActiveReadingItem(null);
+                setActiveTab('units');
+              }}
               className="hover:text-slate-900 transition-colors cursor-pointer"
             >
               Юниты
             </button>
             <span aria-hidden="true" className="text-slate-300">·</span>
             <button
-              onClick={() => setActiveTab('drill')}
+              onClick={() => {
+                setActiveReadingItem(null);
+                setActiveTab('drill');
+              }}
               className="hover:text-slate-900 transition-colors cursor-pointer"
             >
               Тренажер
+            </button>
+            <span aria-hidden="true" className="text-slate-300">·</span>
+            <button
+              onClick={() => {
+                setActiveReadingItem(null);
+                setActiveTab('reading');
+              }}
+              className="hover:text-slate-900 transition-colors cursor-pointer"
+            >
+              Чтение
+            </button>
+            <span aria-hidden="true" className="text-slate-300">·</span>
+            <button
+              onClick={() => setActiveTab('vocabulary')}
+              className="hover:text-slate-900 transition-colors cursor-pointer"
+            >
+              Мои слова
             </button>
             <span aria-hidden="true" className="text-slate-300">·</span>
             <button

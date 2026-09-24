@@ -1,0 +1,275 @@
+import { ReadingItem } from '../../types/reading';
+
+const reading: ReadingItem = {
+  id: 'the-red-headed-league',
+  title: 'The Red-Headed League',
+  author: 'Arthur Conan Doyle',
+  source: 'Adapted from The Red-Headed League, Project Gutenberg',
+  license: 'Public domain',
+  level: 'B1-B2',
+  topic: 'Литература',
+  readingMinutes: 5,
+  wordCount: 460,
+  descriptionRu: 'Знаменитое расследование Шерлока Холмса: странный союз рыжеволосых мужчин и дерзкая попытка ограбления лондонского банка.',
+  paragraphs: [
+    {
+      sentences: [
+        {
+          en: 'One autumn afternoon, Sherlock Holmes received a visit from Jabez Wilson, an elderly London pawnbroker with fiery red hair.',
+          ru: 'Однажды осенним днём к Шерлоку Холмсу пришёл Джабез Уилсон — пожилой лондонский ростовщик с ярко-рыжими волосами.',
+        },
+        {
+          en: 'Wilson explained that his young assistant, Vincent Spaulding, had urged him to apply for a vacancy in an unusual association called the Red-Headed League.',
+          ru: 'Уилсон объяснил, что его молодой помощник Винсент Сполдинг убедил его подать заявку на вакансию в необычном союзе под названием «Союз рыжих».',
+        },
+        {
+          en: 'According to the advertisement, any man with bright red hair could earn four pounds a week simply for copying the Encyclopaedia Britannica.',
+          ru: 'Согласно объявлению, любой мужчина с ярко-рыжими волосами мог зарабатывать четыре фунта в неделю всего лишь переписывая Британскую энциклопедию.',
+        },
+      ],
+    },
+    {
+      sentences: [
+        {
+          en: 'For eight weeks, Wilson sat in an isolated office every morning from ten until two, copying articles without interruption.',
+          ru: 'На протяжении восьми недель Уилсон каждое утро с десяти до двух сидел в уединённом офисе, непрерывно переписывая статьи.',
+        },
+        {
+          en: 'However, that morning he found a cardboard notice pinned to the locked door stating that the Red-Headed League was dissolved.',
+          ru: 'Однако тем утром он обнаружил приколотую к запертой двери картонную табличку, гласившую, что Союз рыжих распущен.',
+        },
+        {
+          en: 'Puzzled and disappointed by this sudden dismissal, Wilson came directly to Baker Street to seek Holmes’s assistance.',
+          ru: 'Озадаченный и разочарованный этим внезапным увольнением, Уилсон сразу же пришёл на Бейкер-стрит за помощью к Холмсу.',
+        },
+      ],
+    },
+    {
+      sentences: [
+        {
+          en: 'Holmes listened attentively to the peculiar narrative and asked several pointed questions about Wilson’s assistant.',
+          ru: 'Холмс внимательно выслушал странный рассказ и задал несколько точных вопросов о помощнике Уилсона.',
+        },
+        {
+          en: 'Wilson revealed that Spaulding had agreed to work for half wages and spent excessive time developing photographs in the dark cellar beneath the shop.',
+          ru: 'Уилсон открыл, что Сполдинг согласился работать за полцены и проводил подозрительно много времени за проявкой фотографий в тёмном подвале под лавкой.',
+        },
+        {
+          en: 'Immediately suspecting a covert conspiracy, Holmes and Watson visited Wilson’s neighbourhood and tapped the pavement outside the pawnbroker’s cellar.',
+          ru: 'Сразу заподозрив тайный сговор, Холмс и Ватсон посетили район Уилсона и постучали по мостовой возле подвала ростовщика.',
+        },
+      ],
+    },
+    {
+      sentences: [
+        {
+          en: 'When Spaulding answered the shop door, Holmes noticed that the knees of the assistant’s trousers were heavily stained with clay and dirt.',
+          ru: 'Когда Сполдинг открыл дверь лавки, Холмс заметил, что колени на брюках помощника были сильно испачканы глиной и грязью.',
+        },
+        {
+          en: 'The detective realized that Vincent Spaulding was actually John Clay, an infamous criminal mastermind who had been digging a subterranean tunnel.',
+          ru: 'Детектив понял, что Винсент Сполдинг на самом деле являлся Джоном Клеем — печально известным главарём преступного мира, копавшим подземный туннель.',
+        },
+        {
+          en: 'The tunnel led directly from the cellar beneath Wilson’s shop into the strongroom of the adjacent City and Suburban Bank.',
+          ru: 'Туннель вел напрямую из подвала под лавкой Уилсона в бронированную кладовую соседнего Городского и пригородного банка.',
+        },
+      ],
+    },
+    {
+      sentences: [
+        {
+          en: 'The ridiculous league had been invented merely to keep Wilson away from his premises while the thieves excavated the passageway.',
+          ru: 'Нелепый союз был придуман лишь для того, чтобы держать Уилсона вдали от дома, пока воры прокладывали ход.',
+        },
+        {
+          en: 'That Saturday night, Holmes, Watson, a bank director, and a police inspector concealed themselves inside the dark bank vault.',
+          ru: 'В ту субботнюю ночь Холмс, Ватсон, директор банка и полицейский инспектор спрятались в тёмном банковском хранилище.',
+        },
+        {
+          en: 'Suddenly, a stone in the floor moved, and Clay climbed through the opening, only to be seized immediately by the waiting officers.',
+          ru: 'Внезапно каменная плита в полу сдвинулась, и Клей выбрался через проём, но был немедленно схвачен ожидавшими офицерами.',
+        },
+        {
+          en: 'Once again, Holmes’s keen observation and logical deduction had thwarted an ingenious bank robbery.',
+          ru: 'В очередной раз острая наблюдательность и логическая дедукция Холмса предотвратили хитроумное ограбление банка.',
+        },
+      ],
+    },
+  ],
+  glossary: {
+    pawnbroker: { ru: 'ростовщик, владелец ломбарда', note: 'noun — someone who lends money on the security of personal property' },
+    vacancy: { ru: 'вакансия, свободное место', note: 'noun — an unoccupied job position' },
+    encyclopaedia: { ru: 'энциклопедия', note: 'noun — a comprehensive reference work' },
+    dissolved: { ru: 'распущен, ликвидирован', note: 'verb / adjective — officially ended or broken up' },
+    dismissal: { ru: 'увольнение, отстранение', note: 'noun — the act of ordering someone to leave a job' },
+    peculiar: { ru: 'своеобразный, странный', note: 'adjective — strange, unusual or eccentric' },
+    cellar: { ru: 'подвал, погреб', note: 'noun — an underground room' },
+    conspiracy: { ru: 'заговор, сговор', note: 'noun — a secret plan by a group to do something unlawful' },
+    subterranean: { ru: 'подземный', note: 'adjective — situated underground' },
+    strongroom: { ru: 'сейфовая комната, бронированная кладовая', note: 'noun — a room designed to protect valuables against theft' },
+    adjacent: { ru: 'соседний, прилегающий', note: 'adjective — next to or adjoining something else' },
+    excavated: { ru: 'выкапывали, прорывали', note: 'verb (past) — made a hole or channel by digging' },
+    concealed: { ru: 'спрятались, скрылись', note: 'verb (past) — kept out of sight or hidden' },
+    vault: { ru: 'хранилище, сейф', note: 'noun — a secure room used to store money and gold' },
+    thwarted: { ru: 'расстроил, сорвал (планы)', note: 'verb (past) — prevented someone from accomplishing something' },
+    deduction: { ru: 'дедукция, логический вывод', note: 'noun — reasoning from general principles to specific cases' },
+  },
+  questions: [
+    {
+      question: 'Why did Jabez Wilson visit Sherlock Holmes at Baker Street?',
+      answer: 'Because the Red-Headed League had been dissolved suddenly without explanation.',
+      acceptedAnswers: [
+        'Because the Red-Headed League was dissolved',
+        'The Red-Headed League was dissolved',
+        'His job at the Red-Headed League suddenly ended',
+        'The league was dissolved',
+      ],
+      explanationRu: 'Уилсон пришёл к Холмсу, потому что Лига рыжих неожиданно закрылась, и он потерял работу.',
+    },
+    {
+      question: 'What duty had Wilson been paid four pounds a week to perform?',
+      answer: 'He copied the Encyclopaedia Britannica by hand.',
+      acceptedAnswers: [
+        'Copying the Encyclopaedia Britannica',
+        'To copy the Encyclopaedia Britannica',
+        'He copied the encyclopedia',
+        'Copying the encyclopaedia',
+      ],
+      explanationRu: 'Уилсон получал четыре фунта в неделю просто за переписывание Британской энциклопедии.',
+    },
+    {
+      question: 'What physical clue on Vincent Spaulding’s clothing caught Holmes’s attention?',
+      answer: 'The knees of his trousers were stained with clay and dirt.',
+      acceptedAnswers: [
+        'His trousers were stained with clay',
+        'Clay and dirt on his trouser knees',
+        'His stained trouser knees',
+        'Trousers stained with dirt and clay',
+      ],
+      explanationRu: 'Холмс заметил, что колени брюк Сполдинга были испачканы глиной и грязью от копания земли.',
+    },
+    {
+      question: 'What was Vincent Spaulding’s true identity and real intention?',
+      answer: 'He was John Clay, and he was digging a tunnel to rob the bank.',
+      acceptedAnswers: [
+        'He was John Clay, a criminal digging a tunnel to the bank',
+        'John Clay digging a tunnel into the bank strongroom',
+        'He wanted to rob the bank vault through a tunnel',
+        'John Clay robbing the bank',
+      ],
+      explanationRu: 'Сполдинг оказался известным вором Джоном Клеем, который рыл подкоп в банковское хранилище.',
+    },
+    {
+      question: 'Why did the criminals create the Red-Headed League in the first place?',
+      answer: 'To keep Wilson away from his shop while they dug the underground tunnel.',
+      acceptedAnswers: [
+        'To keep Wilson away from his shop',
+        'To get Wilson out of the house while digging the tunnel',
+        'To keep Wilson away while they excavated',
+        'To keep Wilson out of his pawnbroker shop',
+      ],
+      explanationRu: 'Они выдумали фиктивную работу, чтобы хозяин лавки отсутствовал каждое утро, пока они рыли ход.',
+    },
+  ],
+  gapExercises: [
+    {
+      id: 'read-rhl-01',
+      sentenceBefore: 'Jabez Wilson said that his assistant',
+      sentenceAfter: 'him to apply for the vacancy.',
+      promptWord: '(persuade)',
+      correctAnswer: 'had persuaded',
+      acceptedAnswers: ['had persuaded'],
+      ruleExplanationRu: 'Past Perfect для действия, предшествовавшего моменту рассказа в прошлом (said that...).',
+      ruleFormula: 'had + V3',
+      hintRu: 'Предшествующее действие перед моментом в прошлом выражается временем Past Perfect.',
+      russianTranslation: 'Джабез Уилсон сказал, что его помощник убедил его подать заявку на вакансию.',
+    },
+    {
+      id: 'read-rhl-02',
+      sentenceBefore: 'Wilson was paid four pounds a week just',
+      sentenceAfter: 'pages from the encyclopaedia.',
+      promptWord: '(copy)',
+      correctAnswer: 'for copying',
+      acceptedAnswers: ['for copying'],
+      ruleExplanationRu: 'Герундий после предлога for (pay someone for doing something).',
+      ruleFormula: 'preposition (for) + V-ing',
+      hintRu: 'После английских предлогов глагол всегда употребляется в форме герундия (-ing).',
+      russianTranslation: 'Уилсону платили четыре фунта в неделю всего лишь за переписывание страниц энциклопедии.',
+    },
+    {
+      id: 'read-rhl-03',
+      sentenceBefore: 'Holmes knew that the tunnel',
+      sentenceAfter: 'by John Clay under the shop.',
+      promptWord: '(dig)',
+      correctAnswer: 'had been dug',
+      acceptedAnswers: ['had been dug'],
+      ruleExplanationRu: 'Past Perfect Passive: had been + V3 для действия в пассивном залоге, завершившегося к моменту расследования.',
+      ruleFormula: 'had been + V3',
+      hintRu: 'Пассивный залог предшествующего действия требует формулы had been + 3-я форма глагола.',
+      russianTranslation: 'Холмс знал, что туннель под лавкой был вырыт Джоном Клеем.',
+    },
+    {
+      id: 'read-rhl-04',
+      sentenceBefore: 'If Holmes had not noticed the stained trousers, the thieves',
+      sentenceAfter: 'the gold from the vault.',
+      promptWord: '(steal)',
+      correctAnswer: 'would have stolen',
+      acceptedAnswers: ['would have stolen', 'might have stolen'],
+      ruleExplanationRu: 'Third Conditional (нереальное условие в прошлом): If + had + V3, would have + V3.',
+      ruleFormula: 'would have + V3',
+      hintRu: 'Нереальное условие в прошлом требует в главном предложении would have + 3-ю форму глагола.',
+      russianTranslation: 'Если бы Холмс не заметил испачканные брюки, воры украли бы золото из хранилища.',
+    },
+    {
+      id: 'read-rhl-05',
+      sentenceBefore: 'Vincent Spaulding agreed',
+      sentenceAfter: 'for half the standard wages.',
+      promptWord: '(work)',
+      correctAnswer: 'to work',
+      acceptedAnswers: ['to work'],
+      ruleExplanationRu: 'Глагол agree требует после себя инфинитива с частицей to (agree to do something).',
+      ruleFormula: 'agree + to-infinitive',
+      hintRu: 'После глагола agree используется инфинитив с частицей to.',
+      russianTranslation: 'Винсент Сполдинг согласился работать за половину стандартного жалованья.',
+    },
+    {
+      id: 'read-rhl-06',
+      sentenceBefore: 'The inspector told Watson that the suspects',
+      sentenceAfter: 'later that night.',
+      promptWord: '(arrest)',
+      correctAnswer: 'would be arrested',
+      acceptedAnswers: ['would be arrested'],
+      ruleExplanationRu: 'Future in the Past Passive: would be + V3 при согласовании времён после прошедшего времени (told).',
+      ruleFormula: 'would be + V3',
+      hintRu: 'Пассивное будущее действие после прошедшего времени главного предложения выражается через would be + V3.',
+      russianTranslation: 'Инспектор сказал Ватсону, что подозреваемые будут арестованы позже той ночью.',
+    },
+    {
+      id: 'read-rhl-07',
+      sentenceBefore: 'Sherlock Holmes prevented the criminal from',
+      sentenceAfter: 'with the bank’s reserves.',
+      promptWord: '(escape)',
+      correctAnswer: 'escaping',
+      acceptedAnswers: ['escaping'],
+      ruleExplanationRu: 'Конструкция prevent someone from doing something требует герундия (-ing) после предлога from.',
+      ruleFormula: 'prevent from + V-ing',
+      hintRu: 'После предлога from глагол ставится в форме герундия с окончанием -ing.',
+      russianTranslation: 'Шерлок Холмс помешал преступнику сбежать с резервами банка.',
+    },
+    {
+      id: 'read-rhl-08',
+      sentenceBefore: 'By tomorrow morning, the news of the arrest',
+      sentenceAfter: 'in every London newspaper.',
+      promptWord: '(appear)',
+      correctAnswer: 'will have appeared',
+      acceptedAnswers: ['will have appeared'],
+      ruleExplanationRu: 'Future Perfect: will have + V3 для действия, которое завершится к определённому моменту в будущем (By tomorrow morning).',
+      ruleFormula: 'will have + V3',
+      hintRu: 'Маркер «By + время в будущем» требует применения времени Future Perfect (will have + V3).',
+      russianTranslation: 'К завтрашнему утру новость об аресте появится во всех лондонских газетах.',
+    },
+  ],
+};
+
+export default reading;

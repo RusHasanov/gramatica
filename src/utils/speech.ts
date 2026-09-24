@@ -20,7 +20,10 @@ function getEnglishVoice(): SpeechSynthesisVoice | null {
 }
 
 export function speakSentence(text: string, onEnd?: () => void): void {
-  if (typeof window === 'undefined' || !window.speechSynthesis) return;
+  if (typeof window === 'undefined' || !window.speechSynthesis) {
+    if (onEnd) onEnd();
+    return;
+  }
 
   // Cancel any ongoing speech
   window.speechSynthesis.cancel();
@@ -42,6 +45,24 @@ export function speakSentence(text: string, onEnd?: () => void): void {
   }
 
   window.speechSynthesis.speak(utterance);
+}
+
+export function pauseSpeech(): void {
+  if (typeof window !== 'undefined' && window.speechSynthesis) {
+    window.speechSynthesis.pause();
+  }
+}
+
+export function resumeSpeech(): void {
+  if (typeof window !== 'undefined' && window.speechSynthesis) {
+    window.speechSynthesis.resume();
+  }
+}
+
+export function stopSpeech(): void {
+  if (typeof window !== 'undefined' && window.speechSynthesis) {
+    window.speechSynthesis.cancel();
+  }
 }
 
 // Ensure voices are loaded

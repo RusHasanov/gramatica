@@ -1,8 +1,8 @@
 import React from 'react';
-import { Flame, BookOpen, PenTool, AlertCircle, Zap } from 'lucide-react';
+import { Flame, BookOpen, PenTool, AlertCircle, Zap, BookMarked, Bookmark } from 'lucide-react';
 import { PWAInstallButton } from './PWAInstallButton';
 
-export type ActiveTab = 'units' | 'drill' | 'mistakes';
+export type ActiveTab = 'units' | 'drill' | 'reading' | 'vocabulary' | 'mistakes';
 
 interface NavbarProps {
   activeTab: ActiveTab;
@@ -10,6 +10,7 @@ interface NavbarProps {
   streakDays: number;
   accuracy: number;
   mistakesCount: number;
+  savedWordsCount?: number;
   onStartDailyDrill: () => void;
   isBlitzActive?: boolean;
 }
@@ -20,6 +21,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   streakDays,
   accuracy,
   mistakesCount,
+  savedWordsCount = 0,
   onStartDailyDrill,
   isBlitzActive = false,
 }) => {
@@ -39,7 +41,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           </button>
 
           {/* Desktop Navigation Links */}
-          <nav className="hidden md:flex items-center gap-1 sm:gap-2">
+          <nav className="hidden md:flex items-center gap-1 sm:gap-1.5">
             <button
               onClick={() => setActiveTab('units')}
               className={`min-h-[44px] px-3.5 py-2 text-sm font-medium transition-colors cursor-pointer rounded-xl ${
@@ -48,7 +50,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                   : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
               }`}
             >
-              Юниты и правила
+              Юниты
             </button>
 
             <button
@@ -59,7 +61,34 @@ export const Navbar: React.FC<NavbarProps> = ({
                   : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
               }`}
             >
-              Тренажер (Дрилл)
+              Тренажер
+            </button>
+
+            <button
+              onClick={() => setActiveTab('reading')}
+              className={`min-h-[44px] px-3.5 py-2 text-sm font-medium transition-colors cursor-pointer rounded-xl ${
+                activeTab === 'reading'
+                  ? 'text-sky-900 bg-sky-50 font-semibold'
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+              }`}
+            >
+              Чтение
+            </button>
+
+            <button
+              onClick={() => setActiveTab('vocabulary')}
+              className={`min-h-[44px] px-3.5 py-2 text-sm font-medium transition-colors cursor-pointer rounded-xl relative ${
+                activeTab === 'vocabulary'
+                  ? 'text-sky-900 bg-sky-50 font-semibold'
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+              }`}
+            >
+              <span>Мои слова</span>
+              {savedWordsCount > 0 && (
+                <span className="ml-1.5 inline-flex items-center px-1.5 py-0.5 text-xs font-semibold text-sky-700 bg-sky-50 rounded-full">
+                  {savedWordsCount}
+                </span>
+              )}
             </button>
 
             <button
@@ -99,7 +128,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             {/* Desktop Blitz CTA */}
             <button
               onClick={onStartDailyDrill}
-              className="hidden md:flex min-h-[44px] items-center gap-1.5 px-4 py-2 text-xs sm:text-sm font-semibold text-white bg-slate-900 rounded-xl hover:bg-slate-800 transition-colors whitespace-nowrap shadow-sm cursor-pointer"
+              className="hidden md:flex min-h-[44px] items-center gap-1.5 px-4 py-2 text-xs sm:text-sm font-semibold text-white bg-slate-900 rounded-xl hover:bg-slate-800 transition-colors whitespace-nowrap shadow-xs cursor-pointer"
             >
               <Zap className="w-4 h-4 fill-amber-400 text-amber-400" />
               <span>Дневной блиц (10)</span>
@@ -116,7 +145,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           paddingBottom: 'max(env(safe-area-inset-bottom, 0px), 8px)',
         }}
       >
-        <div className="grid grid-cols-4 px-2 pt-1">
+        <div className="grid grid-cols-5 px-1 pt-1">
           {/* Tab 1: Юниты */}
           <button
             onClick={() => setActiveTab('units')}
@@ -127,7 +156,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             }`}
           >
             <BookOpen className="w-5 h-5 shrink-0" />
-            <span className="text-[11px] leading-none tracking-tight">Юниты</span>
+            <span className="text-[10px] leading-none tracking-tight">Юниты</span>
           </button>
 
           {/* Tab 2: Тренажёр */}
@@ -140,10 +169,43 @@ export const Navbar: React.FC<NavbarProps> = ({
             }`}
           >
             <PenTool className="w-5 h-5 shrink-0" />
-            <span className="text-[11px] leading-none tracking-tight">Тренажёр</span>
+            <span className="text-[10px] leading-none tracking-tight">Тренажёр</span>
           </button>
 
-          {/* Tab 3: Ошибки */}
+          {/* Tab 3: Чтение */}
+          <button
+            onClick={() => setActiveTab('reading')}
+            className={`min-h-[48px] py-1 flex flex-col items-center justify-center gap-1 rounded-xl transition-colors cursor-pointer select-none active:scale-95 ${
+              activeTab === 'reading'
+                ? 'text-sky-600 font-semibold'
+                : 'text-slate-500 hover:text-slate-800'
+            }`}
+          >
+            <BookMarked className="w-5 h-5 shrink-0" />
+            <span className="text-[10px] leading-none tracking-tight">Чтение</span>
+          </button>
+
+          {/* Tab 4: Мои слова */}
+          <button
+            onClick={() => setActiveTab('vocabulary')}
+            className={`min-h-[48px] py-1 flex flex-col items-center justify-center gap-1 rounded-xl transition-colors cursor-pointer select-none relative active:scale-95 ${
+              activeTab === 'vocabulary'
+                ? 'text-sky-600 font-semibold'
+                : 'text-slate-500 hover:text-slate-800'
+            }`}
+          >
+            <div className="relative">
+              <Bookmark className="w-5 h-5 shrink-0" />
+              {savedWordsCount > 0 && (
+                <span className="absolute -top-1 -right-2 min-w-[14px] h-3.5 px-1 rounded-full bg-sky-600 text-white text-[9px] font-bold flex items-center justify-center leading-none">
+                  {savedWordsCount > 99 ? '99+' : savedWordsCount}
+                </span>
+              )}
+            </div>
+            <span className="text-[10px] leading-none tracking-tight">Слова</span>
+          </button>
+
+          {/* Tab 5: Ошибки */}
           <button
             onClick={() => setActiveTab('mistakes')}
             className={`min-h-[48px] py-1 flex flex-col items-center justify-center gap-1 rounded-xl transition-colors cursor-pointer select-none relative active:scale-95 ${
@@ -160,20 +222,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 </span>
               )}
             </div>
-            <span className="text-[11px] leading-none tracking-tight">Ошибки</span>
-          </button>
-
-          {/* Tab 4: Блиц */}
-          <button
-            onClick={onStartDailyDrill}
-            className={`min-h-[48px] py-1 flex flex-col items-center justify-center gap-1 rounded-xl transition-colors cursor-pointer select-none active:scale-95 ${
-              isBlitzActive
-                ? 'text-amber-600 font-semibold'
-                : 'text-slate-500 hover:text-amber-600'
-            }`}
-          >
-            <Zap className={`w-5 h-5 shrink-0 ${isBlitzActive ? 'fill-amber-500 text-amber-500' : ''}`} />
-            <span className="text-[11px] leading-none tracking-tight">Блиц</span>
+            <span className="text-[10px] leading-none tracking-tight">Ошибки</span>
           </button>
         </div>
       </nav>
