@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
+  <rect width="512" height="512" rx="112" fill="#0f172a"/>
+  <rect width="512" height="512" rx="112" fill="url(#navyGrad)" opacity="0.8"/>
+  <defs>
+    <linearGradient id="navyGrad" x1="0" y1="0" x2="512" y2="512" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#0284c7" stop-opacity="0.4"/>
+      <stop offset="100%" stop-color="#0f172a" stop-opacity="1"/>
+    </linearGradient>
+  </defs>
+  <!-- Open Book -->
+  <path d="M76 348C136 332 208 340 248 376V148C208 116 136 108 76 124V348Z" fill="#ffffff" fill-opacity="0.95"/>
+  <path d="M436 348C376 332 304 340 264 376V148C304 116 376 108 436 124V348Z" fill="#ffffff" fill-opacity="0.95"/>
+  <path d="M248 148V376C253 373 259 373 264 376V148C259 145 253 145 248 148Z" fill="#38bdf8"/>
+  <!-- Bookmark ribbon -->
+  <path d="M248 100V240L256 230L264 240V100H248Z" fill="#f59e0b"/>
+  <!-- Page rules -->
+  <path d="M120 180H210M120 224H210M120 268H180" stroke="#0284c7" stroke-width="8" stroke-linecap="round"/>
+  <path d="M302 180H392M302 224H392M302 268H362" stroke="#0284c7" stroke-width="8" stroke-linecap="round"/>
+  <!-- Accent badge -->
+  <circle cx="392" cy="116" r="28" fill="#38bdf8"/>
+  <path d="M382 116L390 124L404 110" stroke="#0f172a" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
