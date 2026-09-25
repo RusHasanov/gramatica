@@ -75,6 +75,7 @@ export const VocabularyView: React.FC<VocabularyViewProps> = ({ onGoToReading })
     if (isCorrectAnswer) {
       setDrillCorrectCount((prev) => prev + 1);
     }
+    drillInputRef.current?.focus({ preventScroll: true });
   };
 
   const handleNextDrill = () => {
@@ -82,9 +83,9 @@ export const VocabularyView: React.FC<VocabularyViewProps> = ({ onGoToReading })
     setDrillChecked(false);
     setDrillIndex((prev) => prev + 1);
     if (drillInputRef.current) {
-      drillInputRef.current.focus();
+      drillInputRef.current.focus({ preventScroll: true });
     }
-    setTimeout(() => drillInputRef.current?.focus(), 40);
+    setTimeout(() => drillInputRef.current?.focus({ preventScroll: true }), 40);
   };
 
   // Filtered words
@@ -235,8 +236,11 @@ export const VocabularyView: React.FC<VocabularyViewProps> = ({ onGoToReading })
             {!drillChecked ? (
               <button
                 type="submit"
+                onPointerDown={(e) => e.preventDefault()}
+                onMouseDown={(e) => e.preventDefault()}
                 disabled={!userAnswer.trim()}
-                className="w-full min-h-[48px] text-sm font-semibold rounded-xl bg-slate-900 text-white hover:bg-slate-800 disabled:opacity-40 transition-all cursor-pointer shadow-xs active:scale-98"
+                className="w-full min-h-[48px] text-sm font-semibold rounded-xl bg-slate-900 text-white hover:bg-slate-800 disabled:opacity-40 transition-all cursor-pointer shadow-xs active:scale-98 touch-manipulation"
+                style={{ touchAction: 'manipulation' }}
               >
                 Проверить
               </button>
@@ -261,8 +265,11 @@ export const VocabularyView: React.FC<VocabularyViewProps> = ({ onGoToReading })
 
                 <button
                   type="button"
+                  onPointerDown={(e) => e.preventDefault()}
+                  onMouseDown={(e) => e.preventDefault()}
                   onClick={handleNextDrill}
-                  className="w-full min-h-[48px] text-sm font-semibold rounded-xl bg-sky-600 text-white hover:bg-sky-500 transition-all cursor-pointer flex items-center justify-center gap-2 shadow-xs active:scale-98"
+                  className="w-full min-h-[48px] text-sm font-semibold rounded-xl bg-sky-600 text-white hover:bg-sky-500 transition-all cursor-pointer flex items-center justify-center gap-2 shadow-xs active:scale-98 touch-manipulation"
+                  style={{ touchAction: 'manipulation' }}
                 >
                   <span>{drillIndex < drillQueue.length - 1 ? 'Следующее слово' : 'Завершить'}</span>
                   <ArrowRight className="w-4 h-4" />

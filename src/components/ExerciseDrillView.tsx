@@ -49,6 +49,7 @@ export const ExerciseDrillView: React.FC<ExerciseDrillViewProps> = ({
 
   const inputRef = useRef<HTMLInputElement>(null);
   const cardRef = useRef<HTMLDivElement>(null);
+  const blurTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const currentExercise = exercises[currentIndex];
   const isLastQuestion = currentIndex >= exercises.length - 1;
@@ -63,13 +64,20 @@ export const ExerciseDrillView: React.FC<ExerciseDrillViewProps> = ({
 
     // Keep focus immediately in the field so keyboard does not dismiss and reopen
     if (inputRef.current) {
-      inputRef.current.focus();
+      inputRef.current.focus({ preventScroll: true });
     }
     const timer = setTimeout(() => {
-      inputRef.current?.focus();
+      inputRef.current?.focus({ preventScroll: true });
     }, 40);
     return () => clearTimeout(timer);
   }, [currentIndex, exercises]);
+
+  // Clean up blur timer on unmount
+  useEffect(() => {
+    return () => {
+      if (blurTimeoutRef.current) clearTimeout(blurTimeoutRef.current);
+    };
+  }, []);
 
   // Smooth scroll card near top edge with a small offset (accounting for sticky header)
   const scrollToCardTop = () => {
@@ -84,9 +92,24 @@ export const ExerciseDrillView: React.FC<ExerciseDrillViewProps> = ({
   };
 
   const handleInputFocus = () => {
+    if (blurTimeoutRef.current) {
+      clearTimeout(blurTimeoutRef.current);
+      blurTimeoutRef.current = null;
+    }
     setIsInputFocused(true);
     setTimeout(() => {
       scrollToCardTop();
+    }, 150);
+  };
+
+  const handleInputBlur = () => {
+    if (blurTimeoutRef.current) {
+      clearTimeout(blurTimeoutRef.current);
+    }
+    blurTimeoutRef.current = setTimeout(() => {
+      if (document.activeElement !== inputRef.current) {
+        setIsInputFocused(false);
+      }
     }, 150);
   };
 
@@ -136,6 +159,9 @@ export const ExerciseDrillView: React.FC<ExerciseDrillViewProps> = ({
     }
 
     onRecordResult(currentExercise, result.isCorrect, userAnswer.trim());
+
+    // Explicitly return focus to input without scrolling
+    inputRef.current?.focus({ preventScroll: true });
   };
 
   // Next exercise or finish
@@ -146,6 +172,9 @@ export const ExerciseDrillView: React.FC<ExerciseDrillViewProps> = ({
     } else {
       setCurrentIndex((prev) => prev + 1);
     }
+
+    // Explicitly return focus to input without scrolling
+    inputRef.current?.focus({ preventScroll: true });
   };
 
   // Keyboard shortcut: Enter to check or next
@@ -269,6 +298,9 @@ export const ExerciseDrillView: React.FC<ExerciseDrillViewProps> = ({
           </p>
 
           <button
+            type="button"
+            onPointerDown={(e) => e.preventDefault()}
+            onMouseDown={(e) => e.preventDefault()}
             onClick={handleSpeak}
             disabled={isSpeaking}
             title="Прослушать произношение"
@@ -305,7 +337,7 @@ export const ExerciseDrillView: React.FC<ExerciseDrillViewProps> = ({
                 onChange={(e) => setUserAnswer(e.target.value)}
                 onKeyDown={handleKeyDown}
                 onFocus={handleInputFocus}
-                onBlur={() => setIsInputFocused(false)}
+                onBlur={handleInputBlur}
                 placeholder={currentExercise.promptWord}
                 autoCapitalize="off"
                 autoCorrect="off"
@@ -345,6 +377,8 @@ export const ExerciseDrillView: React.FC<ExerciseDrillViewProps> = ({
           <div className="flex items-center justify-between gap-2 pt-2 border-t border-slate-100">
             <button
               type="button"
+              onPointerDown={(e) => e.preventDefault()}
+              onMouseDown={(e) => e.preventDefault()}
               onClick={() => setShowHint(!showHint)}
               className="inline-flex items-center gap-1.5 text-xs text-slate-600 hover:text-slate-900 px-3 py-2 rounded-xl hover:bg-slate-100 transition-colors cursor-pointer min-h-[44px]"
             >
@@ -355,6 +389,8 @@ export const ExerciseDrillView: React.FC<ExerciseDrillViewProps> = ({
             {/* Mobile-only compact check button directly in the card next to Hint */}
             <button
               type="button"
+              onPointerDown={(e) => e.preventDefault()}
+              onMouseDown={(e) => e.preventDefault()}
               onClick={handleCheck}
               disabled={!userAnswer.trim()}
               className={`md:hidden min-h-[40px] px-3.5 py-1.5 text-xs font-semibold rounded-xl transition-all cursor-pointer shadow-xs flex items-center gap-1.5 active:scale-95 ${
@@ -369,6 +405,8 @@ export const ExerciseDrillView: React.FC<ExerciseDrillViewProps> = ({
             {/* Desktop-only inside card check button */}
             <button
               type="button"
+              onPointerDown={(e) => e.preventDefault()}
+              onMouseDown={(e) => e.preventDefault()}
               onClick={handleCheck}
               disabled={!userAnswer.trim()}
               className={`hidden md:flex min-h-[44px] items-center gap-2 px-5 py-2 text-sm font-semibold rounded-xl transition-all cursor-pointer shadow-xs ${
@@ -388,6 +426,8 @@ export const ExerciseDrillView: React.FC<ExerciseDrillViewProps> = ({
           <div className="flex items-center justify-end md:hidden pt-2 border-t border-slate-100">
             <button
               type="button"
+              onPointerDown={(e) => e.preventDefault()}
+              onMouseDown={(e) => e.preventDefault()}
               onClick={handleNext}
               className="min-h-[40px] px-3.5 py-1.5 text-xs font-semibold bg-sky-600 text-white hover:bg-sky-500 rounded-xl transition-colors cursor-pointer shadow-xs flex items-center gap-1.5 active:scale-95"
             >
@@ -453,6 +493,9 @@ export const ExerciseDrillView: React.FC<ExerciseDrillViewProps> = ({
 
               {/* Desktop inside card next button */}
               <button
+                type="button"
+                onPointerDown={(e) => e.preventDefault()}
+                onMouseDown={(e) => e.preventDefault()}
                 onClick={handleNext}
                 className="hidden md:flex min-h-[44px] items-center gap-2 px-5 py-2 text-sm font-semibold bg-sky-600 text-white hover:bg-sky-500 rounded-xl transition-colors cursor-pointer shadow-xs ml-auto"
               >
@@ -468,6 +511,8 @@ export const ExerciseDrillView: React.FC<ExerciseDrillViewProps> = ({
             <div className="pt-2">
               <button
                 type="button"
+                onPointerDown={(e) => e.preventDefault()}
+                onMouseDown={(e) => e.preventDefault()}
                 onClick={() => setIsRuleExpanded(!isRuleExpanded)}
                 className="w-full min-h-[44px] px-3.5 py-2.5 rounded-xl bg-slate-100 text-slate-700 text-xs sm:text-sm font-semibold hover:bg-slate-200 transition-colors flex items-center justify-between cursor-pointer"
               >
@@ -508,8 +553,9 @@ export const ExerciseDrillView: React.FC<ExerciseDrillViewProps> = ({
 
       {/* BIG Prominent Action Button for Mobile above Tab Bar / Keyboard */}
       <div
-        className="md:hidden fixed left-0 right-0 z-30 px-4 py-2.5 bg-white/95 backdrop-blur-md border-t border-slate-200 shadow-[0_-4px_16px_rgba(0,0,0,0.05)] transition-[bottom] duration-150 ease-out"
+        className="md:hidden fixed left-0 right-0 z-30 px-4 py-2.5 bg-white/95 backdrop-blur-md border-t border-slate-200 shadow-[0_-4px_16px_rgba(0,0,0,0.05)] transition-[bottom] duration-150 ease-out touch-manipulation"
         style={{
+          touchAction: 'manipulation',
           bottom:
             keyboardHeight > 80
               ? `${keyboardHeight}px`
@@ -520,6 +566,9 @@ export const ExerciseDrillView: React.FC<ExerciseDrillViewProps> = ({
       >
         {!hasChecked ? (
           <button
+            type="button"
+            onPointerDown={(e) => e.preventDefault()}
+            onMouseDown={(e) => e.preventDefault()}
             onClick={handleCheck}
             disabled={!userAnswer.trim()}
             className={`w-full min-h-[48px] px-6 text-base font-semibold rounded-xl transition-all cursor-pointer flex items-center justify-center gap-2 active:scale-98 shadow-xs ${
@@ -535,6 +584,9 @@ export const ExerciseDrillView: React.FC<ExerciseDrillViewProps> = ({
           </button>
         ) : (
           <button
+            type="button"
+            onPointerDown={(e) => e.preventDefault()}
+            onMouseDown={(e) => e.preventDefault()}
             onClick={handleNext}
             className="w-full min-h-[48px] px-6 text-base font-semibold rounded-xl bg-sky-600 hover:bg-sky-500 active:bg-sky-700 text-white transition-all cursor-pointer flex items-center justify-center gap-2 shadow-xs active:scale-98"
           >

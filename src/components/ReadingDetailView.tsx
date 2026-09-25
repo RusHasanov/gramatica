@@ -537,8 +537,11 @@ export const ReadingDetailView: React.FC<ReadingDetailViewProps> = ({
 
                     <button
                       type="submit"
+                      onPointerDown={(e) => e.preventDefault()}
+                      onMouseDown={(e) => e.preventDefault()}
                       disabled={!ansVal.trim()}
-                      className="min-h-[44px] px-4 py-2 text-xs font-semibold text-white bg-slate-900 hover:bg-slate-800 rounded-xl transition-all cursor-pointer disabled:opacity-40 active:scale-95"
+                      className="min-h-[44px] px-4 py-2 text-xs font-semibold text-white bg-slate-900 hover:bg-slate-800 rounded-xl transition-all cursor-pointer disabled:opacity-40 active:scale-95 touch-manipulation"
+                      style={{ touchAction: 'manipulation' }}
                     >
                       Проверить
                     </button>
@@ -654,8 +657,11 @@ export const ReadingDetailView: React.FC<ReadingDetailViewProps> = ({
                     <div className="flex items-center justify-between pt-1">
                       <button
                         type="submit"
+                        onPointerDown={(e) => e.preventDefault()}
+                        onMouseDown={(e) => e.preventDefault()}
                         disabled={!userVal.trim()}
-                        className="min-h-[44px] px-4 py-2 text-xs font-semibold text-white bg-slate-900 hover:bg-slate-800 rounded-xl transition-all cursor-pointer disabled:opacity-40 active:scale-95"
+                        className="min-h-[44px] px-4 py-2 text-xs font-semibold text-white bg-slate-900 hover:bg-slate-800 rounded-xl transition-all cursor-pointer disabled:opacity-40 active:scale-95 touch-manipulation"
+                        style={{ touchAction: 'manipulation' }}
                       >
                         Проверить форму
                       </button>

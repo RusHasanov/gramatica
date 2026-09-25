@@ -28,6 +28,8 @@ export const Navbar: React.FC<NavbarProps> = ({
   const [isKeyboardOpen, setIsKeyboardOpen] = useState(false);
 
   useEffect(() => {
+    let timer: ReturnType<typeof setTimeout> | null = null;
+
     const checkKeyboard = () => {
       const vv = window.visualViewport;
       if (vv) {
@@ -45,20 +47,37 @@ export const Navbar: React.FC<NavbarProps> = ({
       }
     };
 
+    const handleFocusIn = () => {
+      if (timer) {
+        clearTimeout(timer);
+        timer = null;
+      }
+      checkKeyboard();
+    };
+
+    const handleFocusOut = () => {
+      if (timer) clearTimeout(timer);
+      timer = setTimeout(() => {
+        checkKeyboard();
+      }, 150);
+    };
+
     const vv = window.visualViewport;
     if (vv) {
       vv.addEventListener('resize', checkKeyboard);
       vv.addEventListener('scroll', checkKeyboard);
     }
-    window.addEventListener('focusin', checkKeyboard);
-    window.addEventListener('focusout', () => setTimeout(checkKeyboard, 60));
+    window.addEventListener('focusin', handleFocusIn);
+    window.addEventListener('focusout', handleFocusOut);
 
     return () => {
+      if (timer) clearTimeout(timer);
       if (vv) {
         vv.removeEventListener('resize', checkKeyboard);
         vv.removeEventListener('scroll', checkKeyboard);
       }
-      window.removeEventListener('focusin', checkKeyboard);
+      window.removeEventListener('focusin', handleFocusIn);
+      window.removeEventListener('focusout', handleFocusOut);
     };
   }, []);
   return (
