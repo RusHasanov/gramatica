@@ -490,11 +490,19 @@ export const ReadingDetailView: React.FC<ReadingDetailViewProps> = ({
                     {idx + 1}. {q.question}
                   </p>
 
-                  <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+                  <form
+                    autoComplete="off"
+                    onSubmit={(e) => {
+                      e.preventDefault();
+                      handleCheckQuestion(idx);
+                    }}
+                    className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2"
+                  >
                     <input
                       type="text"
+                      name="grammar-answer"
                       value={ansVal}
-                      disabled={res?.checked && res.isCorrect}
+                      readOnly={res?.checked && res.isCorrect}
                       onChange={(e) =>
                         setQuestionAnswers((prev) => ({
                           ...prev,
@@ -502,23 +510,39 @@ export const ReadingDetailView: React.FC<ReadingDetailViewProps> = ({
                         }))
                       }
                       onKeyDown={(e) => {
-                        if (e.key === 'Enter') handleCheckQuestion(idx);
+                        if (e.key === 'Enter') {
+                          e.preventDefault();
+                          handleCheckQuestion(idx);
+                        }
+                      }}
+                      onFocus={(e) => {
+                        const target = e.currentTarget;
+                        setTimeout(() => {
+                          const rect = target.getBoundingClientRect();
+                          const offset = 70;
+                          const targetY = window.scrollY + rect.top - offset;
+                          window.scrollTo({ top: Math.max(0, targetY), behavior: 'smooth' });
+                        }, 150);
                       }}
                       placeholder="Ваш ответ на английском..."
                       autoCapitalize="off"
                       autoCorrect="off"
+                      autoComplete="off"
+                      data-lpignore="true"
+                      data-form-type="other"
                       spellCheck={false}
+                      enterKeyHint="go"
                       className="flex-1 min-h-[44px] px-3 py-2 text-sm bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-200 focus:border-sky-500 text-slate-900"
                     />
 
                     <button
-                      onClick={() => handleCheckQuestion(idx)}
+                      type="submit"
                       disabled={!ansVal.trim()}
                       className="min-h-[44px] px-4 py-2 text-xs font-semibold text-white bg-slate-900 hover:bg-slate-800 rounded-xl transition-all cursor-pointer disabled:opacity-40 active:scale-95"
                     >
                       Проверить
                     </button>
-                  </div>
+                  </form>
 
                   {res?.checked && (
                     <div className="pt-1 text-xs">
@@ -575,42 +599,68 @@ export const ReadingDetailView: React.FC<ReadingDetailViewProps> = ({
                     </span>
                   </div>
 
-                  <div className="text-base font-serif-book text-slate-900 leading-relaxed">
-                    <span>{ex.sentenceBefore} </span>
-                    <span className="inline-block align-baseline mx-1">
-                      <input
-                        type="text"
-                        value={userVal}
-                        disabled={res?.checked && res.isCorrect}
-                        onChange={(e) =>
-                          setGapAnswers((prev) => ({
-                            ...prev,
-                            [ex.id]: e.target.value,
-                          }))
-                        }
-                        onKeyDown={(e) => {
-                          if (e.key === 'Enter') handleCheckGap(ex);
-                        }}
-                        placeholder={ex.promptWord}
-                        autoCapitalize="off"
-                        autoCorrect="off"
-                        spellCheck={false}
-                        className="font-sans font-medium px-2.5 py-1 text-center rounded-xl border border-slate-300 bg-white text-slate-900 focus:outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-200"
-                        style={{ minWidth: '120px' }}
-                      />
-                    </span>
-                    <span> {ex.sentenceAfter}</span>
-                  </div>
+                  <form
+                    autoComplete="off"
+                    onSubmit={(e) => {
+                      e.preventDefault();
+                      handleCheckGap(ex);
+                    }}
+                    className="space-y-2.5"
+                  >
+                    <div className="text-base font-serif-book text-slate-900 leading-relaxed">
+                      <span>{ex.sentenceBefore} </span>
+                      <span className="inline-block align-baseline mx-1">
+                        <input
+                          type="text"
+                          name="grammar-answer"
+                          value={userVal}
+                          readOnly={res?.checked && res.isCorrect}
+                          onChange={(e) =>
+                            setGapAnswers((prev) => ({
+                              ...prev,
+                              [ex.id]: e.target.value,
+                            }))
+                          }
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                              e.preventDefault();
+                              handleCheckGap(ex);
+                            }
+                          }}
+                          onFocus={(e) => {
+                            const target = e.currentTarget;
+                            setTimeout(() => {
+                              const rect = target.getBoundingClientRect();
+                              const offset = 70;
+                              const targetY = window.scrollY + rect.top - offset;
+                              window.scrollTo({ top: Math.max(0, targetY), behavior: 'smooth' });
+                            }, 150);
+                          }}
+                          placeholder={ex.promptWord}
+                          autoCapitalize="off"
+                          autoCorrect="off"
+                          autoComplete="off"
+                          data-lpignore="true"
+                          data-form-type="other"
+                          spellCheck={false}
+                          enterKeyHint="go"
+                          className="font-sans font-medium px-2.5 py-1 text-center rounded-xl border border-slate-300 bg-white text-slate-900 focus:outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-200"
+                          style={{ minWidth: '120px' }}
+                        />
+                      </span>
+                      <span> {ex.sentenceAfter}</span>
+                    </div>
 
-                  <div className="flex items-center justify-between pt-1">
-                    <button
-                      onClick={() => handleCheckGap(ex)}
-                      disabled={!userVal.trim()}
-                      className="min-h-[44px] px-4 py-2 text-xs font-semibold text-white bg-slate-900 hover:bg-slate-800 rounded-xl transition-all cursor-pointer disabled:opacity-40 active:scale-95"
-                    >
-                      Проверить форму
-                    </button>
-                  </div>
+                    <div className="flex items-center justify-between pt-1">
+                      <button
+                        type="submit"
+                        disabled={!userVal.trim()}
+                        className="min-h-[44px] px-4 py-2 text-xs font-semibold text-white bg-slate-900 hover:bg-slate-800 rounded-xl transition-all cursor-pointer disabled:opacity-40 active:scale-95"
+                      >
+                        Проверить форму
+                      </button>
+                    </div>
+                  </form>
 
                   {res?.checked && (
                     <div className="pt-2 border-t border-slate-200/80 space-y-1 text-xs">

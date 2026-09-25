@@ -42,13 +42,18 @@ export const ExerciseDrillView: React.FC<ExerciseDrillViewProps> = ({
   // Stats for the current session
   const [sessionCorrectCount, setSessionCorrectCount] = useState(0);
 
+  // Virtual keyboard state for mobile
+  const [keyboardHeight, setKeyboardHeight] = useState(0);
+  const [isKeyboardOpen, setIsKeyboardOpen] = useState(false);
+  const [isInputFocused, setIsInputFocused] = useState(false);
+
   const inputRef = useRef<HTMLInputElement>(null);
   const cardRef = useRef<HTMLDivElement>(null);
 
   const currentExercise = exercises[currentIndex];
   const isLastQuestion = currentIndex >= exercises.length - 1;
 
-  // Auto-focus input on question change
+  // Auto-focus input on question change without closing keyboard
   useEffect(() => {
     setUserAnswer('');
     setHasChecked(false);
@@ -56,31 +61,61 @@ export const ExerciseDrillView: React.FC<ExerciseDrillViewProps> = ({
     setShowHint(false);
     setIsRuleExpanded(false);
 
+    // Keep focus immediately in the field so keyboard does not dismiss and reopen
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
     const timer = setTimeout(() => {
       inputRef.current?.focus();
-    }, 120);
+    }, 40);
     return () => clearTimeout(timer);
   }, [currentIndex, exercises]);
 
-  // Keep question and input in view when virtual keyboard pops up on mobile
-  const handleInputFocus = () => {
-    setTimeout(() => {
-      cardRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }, 300);
+  // Smooth scroll card near top edge with a small offset (accounting for sticky header)
+  const scrollToCardTop = () => {
+    if (!cardRef.current) return;
+    const rect = cardRef.current.getBoundingClientRect();
+    const offset = 64; // header height + margin
+    const targetY = window.scrollY + rect.top - offset;
+    window.scrollTo({
+      top: Math.max(0, targetY),
+      behavior: 'smooth',
+    });
   };
 
-  useEffect(() => {
-    const viewport = window.visualViewport;
-    if (!viewport) return;
+  const handleInputFocus = () => {
+    setIsInputFocused(true);
+    setTimeout(() => {
+      scrollToCardTop();
+    }, 150);
+  };
 
-    const handleResize = () => {
+  // Track virtual viewport resize/scroll for iPhone and browsers without interactive-widget
+  useEffect(() => {
+    const vv = window.visualViewport;
+    if (!vv) return;
+
+    const handleViewportChange = () => {
+      const kbHeight = Math.max(0, Math.round(window.innerHeight - vv.height - (vv.offsetTop || 0)));
+      if (kbHeight > 80) {
+        setKeyboardHeight(kbHeight);
+        setIsKeyboardOpen(true);
+      } else {
+        setKeyboardHeight(0);
+        setIsKeyboardOpen(false);
+      }
+
       if (document.activeElement === inputRef.current) {
-        cardRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        scrollToCardTop();
       }
     };
 
-    viewport.addEventListener('resize', handleResize);
-    return () => viewport.removeEventListener('resize', handleResize);
+    vv.addEventListener('resize', handleViewportChange);
+    vv.addEventListener('scroll', handleViewportChange);
+    return () => {
+      vv.removeEventListener('resize', handleViewportChange);
+      vv.removeEventListener('scroll', handleViewportChange);
+    };
   }, []);
 
   // Handle checking the answer
@@ -219,7 +254,7 @@ export const ExerciseDrillView: React.FC<ExerciseDrillViewProps> = ({
       {/* Main Interactive Card - Clean White Styling */}
       <div
         ref={cardRef}
-        className={`bg-white border rounded-2xl p-4 sm:p-7 transition-all shadow-xs ${
+        className={`bg-white border rounded-2xl p-4 sm:p-7 transition-all shadow-xs scroll-mt-16 sm:scroll-mt-20 ${
           hasChecked
             ? checkResult?.isCorrect
               ? 'border-emerald-300 ring-1 ring-emerald-200'
@@ -244,8 +279,9 @@ export const ExerciseDrillView: React.FC<ExerciseDrillViewProps> = ({
           </button>
         </div>
 
-        {/* The Sentence with In-line Cloze Input (Requirements 3 & 4) */}
+        {/* The Sentence with In-line Cloze Input (wrapped in form with autocomplete off) */}
         <form
+          autoComplete="off"
           onSubmit={(e) => {
             e.preventDefault();
             if (!hasChecked) {
@@ -263,15 +299,19 @@ export const ExerciseDrillView: React.FC<ExerciseDrillViewProps> = ({
               <input
                 ref={inputRef}
                 type="text"
+                name="grammar-answer"
                 value={userAnswer}
-                disabled={hasChecked}
+                readOnly={hasChecked}
                 onChange={(e) => setUserAnswer(e.target.value)}
                 onKeyDown={handleKeyDown}
                 onFocus={handleInputFocus}
+                onBlur={() => setIsInputFocused(false)}
                 placeholder={currentExercise.promptWord}
                 autoCapitalize="off"
                 autoCorrect="off"
                 autoComplete="off"
+                data-lpignore="true"
+                data-form-type="other"
                 spellCheck={false}
                 enterKeyHint={hasChecked ? 'next' : 'go'}
                 style={{
@@ -300,10 +340,11 @@ export const ExerciseDrillView: React.FC<ExerciseDrillViewProps> = ({
           </span>
         </div>
 
-        {/* Hint button before check */}
-        {!hasChecked && (
-          <div className="flex items-center justify-between pt-2 border-t border-slate-100">
+        {/* Hint button before check & Mobile compact check button */}
+        {!hasChecked ? (
+          <div className="flex items-center justify-between gap-2 pt-2 border-t border-slate-100">
             <button
+              type="button"
               onClick={() => setShowHint(!showHint)}
               className="inline-flex items-center gap-1.5 text-xs text-slate-600 hover:text-slate-900 px-3 py-2 rounded-xl hover:bg-slate-100 transition-colors cursor-pointer min-h-[44px]"
             >
@@ -311,8 +352,23 @@ export const ExerciseDrillView: React.FC<ExerciseDrillViewProps> = ({
               <span>{showHint ? 'Скрыть подсказку' : 'Подсказка по правилу'}</span>
             </button>
 
+            {/* Mobile-only compact check button directly in the card next to Hint */}
+            <button
+              type="button"
+              onClick={handleCheck}
+              disabled={!userAnswer.trim()}
+              className={`md:hidden min-h-[40px] px-3.5 py-1.5 text-xs font-semibold rounded-xl transition-all cursor-pointer shadow-xs flex items-center gap-1.5 active:scale-95 ${
+                userAnswer.trim()
+                  ? 'bg-slate-900 text-white hover:bg-slate-800 active:bg-slate-950'
+                  : 'bg-slate-200 text-slate-400 cursor-not-allowed'
+              }`}
+            >
+              <span>Проверить</span>
+            </button>
+
             {/* Desktop-only inside card check button */}
             <button
+              type="button"
               onClick={handleCheck}
               disabled={!userAnswer.trim()}
               className={`hidden md:flex min-h-[44px] items-center gap-2 px-5 py-2 text-sm font-semibold rounded-xl transition-all cursor-pointer shadow-xs ${
@@ -325,6 +381,18 @@ export const ExerciseDrillView: React.FC<ExerciseDrillViewProps> = ({
               <kbd className="px-1.5 py-0.5 text-[10px] font-mono bg-slate-700 text-slate-200 rounded">
                 Enter
               </kbd>
+            </button>
+          </div>
+        ) : (
+          /* Mobile-only compact next button in the card after checking */
+          <div className="flex items-center justify-end md:hidden pt-2 border-t border-slate-100">
+            <button
+              type="button"
+              onClick={handleNext}
+              className="min-h-[40px] px-3.5 py-1.5 text-xs font-semibold bg-sky-600 text-white hover:bg-sky-500 rounded-xl transition-colors cursor-pointer shadow-xs flex items-center gap-1.5 active:scale-95"
+            >
+              <span>{isLastQuestion ? 'Завершить урок' : 'Следующий пример'}</span>
+              <ArrowRight className="w-3.5 h-3.5" />
             </button>
           </div>
         )}
@@ -438,11 +506,16 @@ export const ExerciseDrillView: React.FC<ExerciseDrillViewProps> = ({
         <span>Принимаются как полные формы, так и сокращения</span>
       </div>
 
-      {/* BIG Prominent Action Button for Mobile above Tab Bar - Pure White Floating Bar */}
+      {/* BIG Prominent Action Button for Mobile above Tab Bar / Keyboard */}
       <div
-        className="md:hidden fixed left-0 right-0 z-30 px-4 py-2.5 bg-white/95 backdrop-blur-md border-t border-slate-200 shadow-[0_-4px_16px_rgba(0,0,0,0.05)]"
+        className="md:hidden fixed left-0 right-0 z-30 px-4 py-2.5 bg-white/95 backdrop-blur-md border-t border-slate-200 shadow-[0_-4px_16px_rgba(0,0,0,0.05)] transition-[bottom] duration-150 ease-out"
         style={{
-          bottom: 'max(calc(52px + env(safe-area-inset-bottom, 0px)), 56px)',
+          bottom:
+            keyboardHeight > 80
+              ? `${keyboardHeight}px`
+              : (isKeyboardOpen || isInputFocused)
+                ? '0px'
+                : 'max(calc(52px + env(safe-area-inset-bottom, 0px)), 56px)',
         }}
       >
         {!hasChecked ? (

@@ -57,7 +57,10 @@ export const VocabularyView: React.FC<VocabularyViewProps> = ({ onGoToReading })
     setDrillChecked(false);
     setDrillCorrectCount(0);
     setIsDrillMode(true);
-    setTimeout(() => drillInputRef.current?.focus(), 150);
+    if (drillInputRef.current) {
+      drillInputRef.current.focus();
+    }
+    setTimeout(() => drillInputRef.current?.focus(), 50);
   };
 
   // Check Drill Answer
@@ -78,7 +81,10 @@ export const VocabularyView: React.FC<VocabularyViewProps> = ({ onGoToReading })
     setUserAnswer('');
     setDrillChecked(false);
     setDrillIndex((prev) => prev + 1);
-    setTimeout(() => drillInputRef.current?.focus(), 100);
+    if (drillInputRef.current) {
+      drillInputRef.current.focus();
+    }
+    setTimeout(() => drillInputRef.current?.focus(), 40);
   };
 
   // Filtered words
@@ -176,6 +182,7 @@ export const VocabularyView: React.FC<VocabularyViewProps> = ({ onGoToReading })
 
           {/* Input field for user */}
           <form
+            autoComplete="off"
             onSubmit={(e) => {
               e.preventDefault();
               if (!drillChecked) {
@@ -190,14 +197,37 @@ export const VocabularyView: React.FC<VocabularyViewProps> = ({ onGoToReading })
               <input
                 ref={drillInputRef}
                 type="text"
+                name="grammar-answer"
                 value={userAnswer}
-                disabled={drillChecked}
+                readOnly={drillChecked}
                 onChange={(e) => setUserAnswer(e.target.value)}
+                onFocus={(e) => {
+                  const target = e.currentTarget;
+                  setTimeout(() => {
+                    const rect = target.getBoundingClientRect();
+                    const offset = 70;
+                    const targetY = window.scrollY + rect.top - offset;
+                    window.scrollTo({ top: Math.max(0, targetY), behavior: 'smooth' });
+                  }, 150);
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    if (!drillChecked) {
+                      if (userAnswer.trim()) handleCheckDrill();
+                    } else {
+                      handleNextDrill();
+                    }
+                  }
+                }}
                 placeholder="Впишите английское слово..."
                 autoCapitalize="off"
                 autoCorrect="off"
                 autoComplete="off"
+                data-lpignore="true"
+                data-form-type="other"
                 spellCheck={false}
+                enterKeyHint={drillChecked ? 'next' : 'go'}
                 className="w-full min-h-[48px] px-4 py-2.5 text-center text-lg font-medium border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-200 focus:border-sky-500 bg-white text-slate-900"
               />
             </div>

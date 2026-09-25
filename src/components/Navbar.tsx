@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Flame, BookOpen, PenTool, AlertCircle, Zap, BookMarked, Bookmark } from 'lucide-react';
 import { PWAInstallButton } from './PWAInstallButton';
 
@@ -25,6 +25,42 @@ export const Navbar: React.FC<NavbarProps> = ({
   onStartDailyDrill,
   isBlitzActive = false,
 }) => {
+  const [isKeyboardOpen, setIsKeyboardOpen] = useState(false);
+
+  useEffect(() => {
+    const checkKeyboard = () => {
+      const vv = window.visualViewport;
+      if (vv) {
+        const kbHeight = Math.max(0, window.innerHeight - vv.height - (vv.offsetTop || 0));
+        if (kbHeight > 80) {
+          setIsKeyboardOpen(true);
+          return;
+        }
+      }
+      const active = document.activeElement;
+      if (active && (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA')) {
+        setIsKeyboardOpen(true);
+      } else {
+        setIsKeyboardOpen(false);
+      }
+    };
+
+    const vv = window.visualViewport;
+    if (vv) {
+      vv.addEventListener('resize', checkKeyboard);
+      vv.addEventListener('scroll', checkKeyboard);
+    }
+    window.addEventListener('focusin', checkKeyboard);
+    window.addEventListener('focusout', () => setTimeout(checkKeyboard, 60));
+
+    return () => {
+      if (vv) {
+        vv.removeEventListener('resize', checkKeyboard);
+        vv.removeEventListener('scroll', checkKeyboard);
+      }
+      window.removeEventListener('focusin', checkKeyboard);
+    };
+  }, []);
   return (
     <>
       {/* Top Header Bar */}
@@ -140,7 +176,9 @@ export const Navbar: React.FC<NavbarProps> = ({
       {/* Mobile Fixed Bottom Tab Bar */}
       <nav
         aria-label="Мобильная навигация"
-        className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200 shadow-[0_-4px_16px_rgba(0,0,0,0.05)]"
+        className={`md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200 shadow-[0_-4px_16px_rgba(0,0,0,0.05)] transition-all duration-150 ${
+          isKeyboardOpen ? 'hidden pointer-events-none' : ''
+        }`}
         style={{
           paddingBottom: 'max(env(safe-area-inset-bottom, 0px), 8px)',
         }}
